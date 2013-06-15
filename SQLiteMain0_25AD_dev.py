@@ -249,6 +249,7 @@ class MmntInterface:
 		parent = self.getParent()[0]
 		ChildIndex = self.getParent()[2]
 		if parent != '' or ChildIndex != '':
+#		if self.tree.parent(self.tree.selection()[0]) != '':
 			table = databases[parent].tables[ChildIndex]
 			for Column in Columns:
 				name = Column[0].get()
@@ -281,7 +282,6 @@ class MmntInterface:
 				except (sqlite.OperationalError,sqlite.IntegrityError), e:
 						self.EditMessage.configure(text='Message:%s' % (unicode(e.message).encode("utf-8")))
 		else:
-#			print 'välj en tabell först'
 			self.EditMessage.configure(text='Choose a table to configure')
 			
 	def ChangeName(self):												#Currently not working as intended, looking into it at the moment
@@ -290,10 +290,12 @@ class MmntInterface:
 		if parent != '' or ChildIndex != '':
 			table = databases[parent].tables[ChildIndex]
 			NewName = self.TableEntry.get()
-			databases[parent].cur.execute(u"ALTER TABLE {t} RENAME TO {n}".format(t=table, n=NewName))
-			self.changeTables(parent)
+			try:
+				databases[parent].cur.execute(u"ALTER TABLE {t} RENAME TO {n}".format(t=table, n=NewName))
+				self.changeTables(parent)
+			except (sqlite.OperationalError,sqlite.IntegrityError), e:
+				self.EditMessage.configure(text='Message:%s' % (unicode(e.message).encode("utf-8")))
 		else:
-#			print 'Öppna en db först'
 			self.EditMessage.configure(text='Open a database first')
 				
 	def CreateData(self,parent,ChildIndex):
