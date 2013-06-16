@@ -381,13 +381,16 @@ class MmntInterface:
 			Columns[Col][13].grid(column=8,row=Col +1, sticky='n,s,w,e')
 			Columns[Col][13].grid_remove()
 			
-			self.frame4.update_idletasks()
-			Canvas.config(scrollregion=self.canvasf2.bbox('all'))					
+#			self.frame4.update_idletasks()
+#			Canvas.config(scrollregion=self.canvasf2.bbox('all'))					
 		
 		if NumOfColumns != 0 and Canvas == self.canvasf2:
 			self.Add = ttk.Button(self.frame4, text='Add', command=lambda: self.EditTable(Columns)).grid(column=1, row=Col +2)
 		if NumOfColumns != 0 and Canvas == self.canvasf4:	
 			self.Add = ttk.Button(self.frame4, text='Add', command=lambda: self.AddTable(Columns)).grid(column=1, row=Col +2)
+			
+		self.frame4.update_idletasks()
+		Canvas.config(scrollregion=self.canvasf2.bbox('all'))
 			
 	def UpdateCheck(self, Columns):										#This need extentions for the working combinations
 			self.ForignTable.grid_remove()
@@ -452,14 +455,14 @@ class MmntInterface:
 				lab = ttk.Label(self.frame4, text=Name)
 				lab.grid(column=key, row=0, sticky='n,s,w,e')
 
-			for RowKey,Row in enumerate(rows[:100]):
+			for RowKey,Row in enumerate(rows[:50]):
 				for ColKey,Col in enumerate(Row):
 					if Col == None:
 						Col = ''
 					lab = ttk.Entry(self.frame4)
 					lab.insert(ColKey,Col)
 					lab.grid(column=ColKey, row=RowKey + 1, sticky='n,s,w,e')
-				time.sleep(0.002)	
+#				time.sleep(0.002)	
 			self.frame4.update_idletasks()
 			canvas.config(scrollregion=canvas.bbox('all'))
 
