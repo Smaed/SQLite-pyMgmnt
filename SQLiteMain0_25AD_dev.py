@@ -16,7 +16,7 @@ databases = []															#Central for it to work, this contains all Database
 class database:
 	def __init__(self,db):
 		self.db = db
-		self.dbSplit = self.db.split('/')
+		self.dbSplit = self.db.split('/') # FIXME: Unix-specific code
 		self.dbName = self.dbSplit[-1]
 		self.tables = []
 		try:
@@ -287,7 +287,7 @@ class MmntInterface:
 	def ChangeName(self):												#Currently not working as intended, looking into it at the moment
 		parent = self.getParent()[0]
 		ChildIndex = self.getParent()[2]
-		if parent != '' or ChildIndex != '':
+		if !(parent == '' or ChildIndex == ''):
 			table = databases[parent].tables[ChildIndex]
 			NewName = self.TableEntry.get()
 			try:
