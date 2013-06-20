@@ -287,7 +287,8 @@ class MmntInterface:
 	def ChangeName(self):												#Currently not working as intended, looking into it at the moment
 		parent = self.getParent()[0]
 		ChildIndex = self.getParent()[2]
-		if !(parent == '' or ChildIndex == ''):
+#		if !(parent == '' or ChildIndex == ''):
+		if parent != '' or ChildIndex != '':
 			table = databases[parent].tables[ChildIndex]
 			NewName = self.TableEntry.get()
 			try:
