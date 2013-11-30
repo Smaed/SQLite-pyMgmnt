@@ -8,7 +8,6 @@ import time
 import sys
 import dbCon
 
-
 class MmntInterface(object):
     
     def __init__(self,parent):
@@ -20,16 +19,12 @@ class MmntInterface(object):
         
     def CreateWidgets(self, parent):
         self.parent = parent
-        s1 = ttk.Style()
-#        s1.configure('f1.TFrame', background='grey')                    
+        
+        s1 = ttk.Style()                   
         s2 = ttk.Style()
-#        s2.configure('f2.TFrame', background='grey')
         s3 = ttk.Style()
-#        s3.configure('f3.TFrame', background='grey')
         s4 = ttk.Style()
-#        s4.configure('f4.TFrame', background='grey')
         s5 = ttk.Style()
-#        s4.configure('Disabled.TCheckbutton', relief='sunken')
         
         self.frame1 = ttk.Frame(self.parent, style='f1.TFrame')
         self.frame1.pack(fil='x')
@@ -232,7 +227,6 @@ class MmntInterface(object):
         parent = self.getParent()[0]
         ChildIndex = self.getParent()[2]
         if parent != '' or ChildIndex != '':
-#        if self.tree.parent(self.tree.selection()[0]) != '':
             table = self.databases[parent].tables[ChildIndex]
             for Column in Columns:
                 name = Column[0].get()
@@ -252,14 +246,12 @@ class MmntInterface(object):
                 if Column[10].get() == 1:
                     Uni = 'UNIQUE'
                 try:
-                    if Column[6].get() == 0:
-#                        print u'ALTER TABLE {t} ADD COLUMN {n} {d} {a} {nn} {u}'.format(t=table,n=name,d=DataType,a=Auto,nn=NNull,u=Uni)
+                    if Column[6].get() == 0:                     
                         self.databases[parent].cur.execute(u"ALTER TABLE {t} ADD COLUMN {n} {d} {p} {a} {nn} {u}".format(t=table,n=name,d=DataType,p=Prim,a=Auto,nn=NNull,u=Uni))
                     
                     else:
                         RefTable = Column[12].get()
                         RefCol = Column[13].get()
-#                        print u"ALTER TABLE {t} ADD COLUMN {n} {d} {nn} {u} REFERENCES {RF}({RC})".format(t=table,n=name,d=DataType,nn=NNull,u=Uni,RF=RefTable,RC=RefCol)
                         self.databases[parent].cur.execute(u"ALTER TABLE {t} ADD COLUMN {n} {d} {nn} {u} REFERENCES {RF}({RC})".format(t=table,n=name,d=DataType,nn=NNull,u=Uni,RF=RefTable,RC=RefCol))
                     self.EditMessage.configure(text='Message: ')
                 except (sqlite.OperationalError,sqlite.IntegrityError), e:
@@ -270,7 +262,7 @@ class MmntInterface(object):
     def ChangeName(self):                                                #Currently not working as intended, looking into it at the moment
         parent = self.getParent()[0]
         ChildIndex = self.getParent()[2]
-#        if !(parent == '' or ChildIndex == ''):
+        
         if parent != '' or ChildIndex != '':
             table = self.databases[parent].tables[ChildIndex]
             NewName = self.TableEntry.get()
@@ -338,23 +330,23 @@ class MmntInterface(object):
             datatypes.grid(column=1, row=Col +1, sticky='n,s,w,e')
             
             Columns[Col].append(Tkinter.IntVar())    #Prime, [2] IntVar, [3] CheckBox
-            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][2], command=lambda: self.UpdateCheck(Columns)))
+            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][2], command=lambda: self.UpdateCheck(Columns, Canvas)))
             Columns[Col][3].grid(column=2, row=Col +1)
             
             Columns[Col].append(Tkinter.IntVar())  #Auto, [4] IntVar, [5] CheckBox
-            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][4], command=lambda: self.UpdateCheck(Columns)))
+            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][4], command=lambda: self.UpdateCheck(Columns, Canvas)))
             Columns[Col][5].grid(column=3, row=Col +1)
             
             Columns[Col].append(Tkinter.IntVar())  #Foreign, [6] IntVar, [7] CheckBox
-            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][6], command=lambda: self.UpdateCheck(Columns)))
+            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][6], command=lambda: self.UpdateCheck(Columns, Canvas)))
             Columns[Col][7].grid(column=4, row=Col +1)
             
             Columns[Col].append(Tkinter.IntVar())  #Not null, [8] IntVar, [9] CheckBox
-            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][8], command=lambda: self.UpdateCheck(Columns)))
+            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][8], command=lambda: self.UpdateCheck(Columns, Canvas)))
             Columns[Col][9].grid(column=5, row=Col +1)
             
             Columns[Col].append(Tkinter.IntVar())  #uni, [10] IntVar, [11] CheckBox
-            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][10], command=lambda: self.UpdateCheck(Columns)))
+            Columns[Col].append(ttk.Checkbutton(self.frame4, variable=Columns[Col][10], command=lambda: self.UpdateCheck(Columns, Canvas)))
             Columns[Col][11].grid(column=6, row=Col +1)
             
             Columns[Col].append(ttk.Entry(self.frame4))
@@ -376,7 +368,7 @@ class MmntInterface(object):
         self.frame4.update_idletasks()
         Canvas.config(scrollregion=self.canvasf2.bbox('all'))
             
-    def UpdateCheck(self, Columns):                                        #This need extentions for the working combinations
+    def UpdateCheck(self, Columns, Canvas):                                        #This need extentions for the working combinations
             self.ForignTable.grid_remove()
             self.ForignCol.grid_remove()
             for Col in Columns:
@@ -408,6 +400,9 @@ class MmntInterface(object):
                     Col[5]['style'] = 'TCheckbutton'
                     Col[12].grid_remove()
                     Col[13].grid_remove()
+                    
+                self.frame4.update_idletasks()
+                Canvas.config(scrollregion=self.canvasf2.bbox('all'))
     
     def ShowResult(self, parent, command, canvas):
         try:
